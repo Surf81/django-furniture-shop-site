@@ -111,6 +111,15 @@ AUTH_USER_MODEL = 'advuser.AdvancedUser'
 LOGIN_URL = reverse_lazy('auth:login')
 LOGIN_REDIRECT_URL = reverse_lazy('main:index')
 
+# Email settings
+
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "furniture_shop@inbox.ru"
+EMAIL_HOST_PASSWORD = "BD2Npe7AN7RYAywA4Ap6"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 
 from django.contrib.auth import authenticate, get_user_model
+from advuser.apps import user_registered
 
 from advuser.models import AdvancedUser
 
@@ -89,7 +90,7 @@ class EmailLoginForm(forms.Form):
         )
 
 
-class AdvUserBaseForm(forms.ModelForm):
+class SignupForm(forms.ModelForm):
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -106,29 +107,6 @@ class AdvUserBaseForm(forms.ModelForm):
         help_text=_("Enter the same password as before, for verification."),
     )
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError(
-                self.error_messages["password_mismatch"],
-                code="password_mismatch",
-            )
-        return password2
-
-    def _post_clean(self):
-        super()._post_clean()
-        # Validate the password after self.instance is updated with form data
-        # by super().
-        password = self.cleaned_data.get("password2")
-        if password:
-            try:
-                password_validation.validate_password(password, self.instance)
-            except forms.ValidationError as error:
-                self.add_error("password2", error)
-
-
-class SignupForm(AdvUserBaseForm):
     class Meta:
         model = AdvancedUser
         fields = ("email", "password1", "password2", "first_name", "last_name")
@@ -141,16 +119,15 @@ class SignupForm(AdvUserBaseForm):
                 "autofocus"
             ] = True
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        user.username = user.email
-        user.is_activated = False
-        if commit:
-            user.save()
-            if hasattr(self, "save_m2m"):
-                self.save_m2m()
-        return user
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(
+                self.error_messages["password_mismatch"],
+                code="password_mismatch",
+            )
+        return password2
 
     def clean_email(self):
         """Reject usernames that differ only in case."""
@@ -171,27 +148,32 @@ class SignupForm(AdvUserBaseForm):
         else:
             return email
 
+    def _post_clean(self):
+        super()._post_clean()
+        # Validate the password after self.instance is updated with form data
+        # by super().
+        password = self.cleaned_data.get("password2")
+        if password:
+            try:
+                password_validation.validate_password(password, self.instance)
+            except forms.ValidationError as error:
+                self.add_error("password2", error)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        user.username = user.email
+        user.is_activated = False
+        if commit:
+            user.save()
+            if hasattr(self, "save_m2m"):
+                self.save_m2m()
+        user_registered.send(SignupForm, instance=user)                
+        return user
+
 
 class UpdateUserForm(forms.ModelForm):
     class Meta:
         model = AdvancedUser
         fields = ("first_name", "last_name")
 
-
-class ChangePasswordForm(AdvUserBaseForm):
-    class Meta:
-        model = AdvancedUser
-        fields = ("password1", "password2")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["password1"].widget.attrs["autofocus"] = True
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-            if hasattr(self, "save_m2m"):
-                self.save_m2m()
-        return user
