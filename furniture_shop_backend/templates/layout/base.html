@@ -1,0 +1,77 @@
+{% load bootstrap5 %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title%}Главная{% endblock title %} - Доска объявлений</title>
+    {% bootstrap_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
+    {% bootstrap_javascript %}
+</head>
+<body class="container-fluid">
+    <header class="mb-4">
+        <h1 class="display-3 text-center">Магазин мягкой мебели</h1>
+        <div class="row">
+            <ul class="col nav nav-pills justify-content-end border">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Регистрация</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <span class="nav-link dropdown-toggle" 
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    id="dropdownMenuButton1"
+                    >Профиль</span>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#">Мои объявления</a></li>
+                        <li><a class="dropdown-item" href="#">Изменить личные данные</a></li>
+                        <li><a class="dropdown-item" href="#">Изменить пароль</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Выйти</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Удалить</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'auth:login' %}">Вход</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="row">
+            <nav class="col-md-auto nav flex-column border">
+                <a class="nav-link root" 
+                href="{% url 'main:index' %}">Главная</a>
+                {% for rubric in rubrics %}
+                {% ifchanged rubric.super_rubric.pk %}
+                <span class="nav-link root font-weight-bold">
+                    {{ rubric.super_rubric.name }}</span>
+                {% endifchanged %}
+                <a class="nav-link" href="#">
+                    {{ rubric.name }}
+                </a>
+                {% endfor %}
+                <a class="nav-link root" 
+                href="{% url 'main:any_page' url='about' %}">О сайте</a>
+            </nav>
+            <selection class="col border py-2">
+                {% bootstrap_messages %}
+                {% block content %}{% endblock content %}
+            </selection>
+        </div>
+        <footer class="mt-3">
+            <p class="text-right font-italic">&copy; читатели.</p>
+        </footer>
+    </header>
+    
+</body>
+</html>
