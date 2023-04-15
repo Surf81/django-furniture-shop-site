@@ -89,7 +89,7 @@ class EmailLoginForm(forms.Form):
         )
 
 
-class SignupForm(forms.ModelForm):
+class AdvUserBaseForm(forms.ModelForm):
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -105,18 +105,6 @@ class SignupForm(forms.ModelForm):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
-
-    class Meta:
-        model = AdvancedUser
-        fields = ("email", "password1", "password2", "first_name", "last_name")
-        field_classes = {"email": EmailField}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self._meta.model.EMAIL_FIELD in self.fields:
-            self.fields[self._meta.model.EMAIL_FIELD].widget.attrs[
-                "autofocus"
-            ] = True
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -138,6 +126,20 @@ class SignupForm(forms.ModelForm):
                 password_validation.validate_password(password, self.instance)
             except forms.ValidationError as error:
                 self.add_error("password2", error)
+
+
+class SignupForm(AdvUserBaseForm):
+    class Meta:
+        model = AdvancedUser
+        fields = ("email", "password1", "password2", "first_name", "last_name")
+        field_classes = {"email": EmailField}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self._meta.model.EMAIL_FIELD in self.fields:
+            self.fields[self._meta.model.EMAIL_FIELD].widget.attrs[
+                "autofocus"
+            ] = True
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -168,3 +170,25 @@ class SignupForm(forms.ModelForm):
             )
         else:
             return email
+
+
+class UpdateUserForm(AdvUserBaseForm):
+    pass
+
+class ChangePasswordForm(AdvUserBaseForm):
+    class Meta:
+        model = AdvancedUser
+        fields = ("password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password1"].widget.attrs["autofocus"] = True
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+            if hasattr(self, "save_m2m"):
+                self.save_m2m()
+        return user

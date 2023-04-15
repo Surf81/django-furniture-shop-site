@@ -33,9 +33,9 @@
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li><a class="dropdown-item" href="#">Мои объявления</a></li>
                         <li><a class="dropdown-item" href="#">Изменить личные данные</a></li>
-                        <li><a class="dropdown-item" href="#">Изменить пароль</a></li>
+                        <li><a class="dropdown-item" href="{% url 'auth:password_change' pk=user.pk %}">Изменить пароль</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Выйти</a></li>
+                        <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Выйти</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#">Удалить</a></li>
                     </ul>
