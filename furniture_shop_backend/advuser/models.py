@@ -13,7 +13,7 @@ class AdvancedUserManager(UserManager):
      
 
 class AdvancedUser(AbstractUser):
-    is_activated = models.BooleanField('прошел активацию', default=False, db_index=True)
+    is_activated = models.BooleanField('прошел активацию', default=True, db_index=True)
     email = models.EmailField(
         _("email address"),
         max_length=150,

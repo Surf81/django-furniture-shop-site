@@ -18,7 +18,7 @@
         <div class="row">
             <ul class="col nav nav-pills justify-content-end border">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Регистрация</a>
+                    <a class="nav-link" href="{% url 'auth:signup' %}">Регистрация</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">

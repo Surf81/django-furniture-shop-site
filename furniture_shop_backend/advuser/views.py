@@ -1,7 +1,12 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView
 
 from advuser.forms import EmailLoginForm, SignupForm
+from advuser.models import AdvancedUser
 
 
 
@@ -16,14 +21,25 @@ class EmailLoginView(LoginView):
 
 
 
-class SignupView:
-
+class SignupView(CreateView):
+    model = AdvancedUser
     form_class = SignupForm
+    template_name = "advuser/register.html"
+    success_url = reverse_lazy("auth:register_done")
 
-    def generate_username(self, form):
-        username = form.cleaned_data["email"]
-        return username
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.new_user = authenticate(username=form.cleaned_data['email'],
+                                password=form.cleaned_data['password1'],
+                                    )
+        return response
 
-    def after_signup(self, form):
-        # do something
-        super(SignupView, self).after_signup(form)
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)        
+        if hasattr(self, "new_user"):
+            login(request, self.new_user)        
+        return response
+    
+
+class RegisterDoneView(TemplateView):
+    template_name = 'advuser/register_done.html'

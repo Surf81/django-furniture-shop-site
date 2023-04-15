@@ -1,0 +1,16 @@
+{% extends 'layout/base.html' %}
+
+{% load bootstrap5 %}
+
+
+{% block title %}Регистрация{% endblock title %}
+
+{% block content %}
+<h3>Регистрация</h3>
+<form method='post'>
+    {% csrf_token %}
+    {% bootstrap_form form layout='horisontal' %}
+    <input type="hidden" name="next" value="{{next}}">
+    {% buttons submit='Зарегистрироваться' %}{% endbuttons %}
+</form>
+{% endblock content %}

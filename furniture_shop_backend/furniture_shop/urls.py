@@ -19,7 +19,7 @@ from django.urls import include, path
 from advuser.views import EmailLoginView
 
 urlpatterns = [
-    path("admin/login/", EmailLoginView.as_view(template_name="advuser/admin-login.html"), name="admin-login"),
+    path("admin/login/", EmailLoginView.as_view(template_name="advuser/admin-login.html")),
     path("admin/", admin.site.urls),
     path("auth/", include('advuser.urls')),
     path("", include('main.urls')),
