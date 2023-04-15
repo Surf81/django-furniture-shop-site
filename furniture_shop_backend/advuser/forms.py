@@ -172,8 +172,11 @@ class SignupForm(AdvUserBaseForm):
             return email
 
 
-class UpdateUserForm(AdvUserBaseForm):
-    pass
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        model = AdvancedUser
+        fields = ("first_name", "last_name")
+
 
 class ChangePasswordForm(AdvUserBaseForm):
     class Meta:
