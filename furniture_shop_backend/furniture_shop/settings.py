@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "bootstrap5",
-
+    'django_cleanup',
+    'easy_thumbnails',
+    
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",
 ]
