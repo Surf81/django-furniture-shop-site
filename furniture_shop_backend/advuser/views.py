@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import reverse_lazy
@@ -33,20 +32,9 @@ class LogoutView(LogoutView):
 
 class AutoAuthorizationMixin:
     def form_valid(self, form):
-        response = super().form_valid(form)
-        email = self.request.user if self.request.user.is_authenticated else None
-        email = form.cleaned_data.get('email', email)
-        if email:
-            self.new_user = authenticate(email=email,
-                                password=form.cleaned_data['password1'],
-                                    )
-        return response
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)        
-        if hasattr(self, "new_user"):
-            login(request, self.new_user)        
-        return response
+        form.save()
+        update_session_auth_hash(self.request, form.user)
+        return super().form_valid(form)
 
 
 class SignupView(AutoAuthorizationMixin, CreateView):

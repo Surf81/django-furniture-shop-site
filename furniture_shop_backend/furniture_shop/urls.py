@@ -17,10 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from advuser.views import EmailLoginView
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.decorators.cache import never_cache
+from django.contrib.staticfiles.views import serve
 
 urlpatterns = [
     path("admin/login/", EmailLoginView.as_view(template_name="advuser/admin-login.html")),
     path("admin/", admin.site.urls),
     path("auth/", include('advuser.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
     path("", include('main.urls')),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns.append(path('static/<path:path>', never_cache(serve))) # Запрет на кеширование статики
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,7 +7,6 @@ from .models import (SuperCategory, SubCategory,
                      CharacteristicProduct)
 
 
-
 class SubCategoryInline(admin.TabularInline):
     model = SubCategory
 
@@ -52,6 +51,7 @@ class CharacteristicsInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'created_at')
-    fields = (('category', 'title'), 'description', 'image', 'is_active', 'created_at', 'changed_at')
+    fields = ('category', 'title', ('price', 'count'), 'description', 'image', 'is_active', 'created_at', 'changed_at')
     readonly_fields = ('created_at', 'changed_at')
     inlines = (AdditionalImageInline, CharacteristicsInline)
+

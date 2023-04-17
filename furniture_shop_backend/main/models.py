@@ -115,6 +115,8 @@ class CharacteristicItem(Characteristic):
 class Product(models.Model):
     title = models.CharField("модель", max_length=150)
     description = models.TextField('описание')
+    count = models.PositiveIntegerField("количество")
+    price = models.PositiveIntegerField("цена")
     image = models.ImageField('изображение', blank=True, upload_to=get_timestamp_path)
     is_active = models.BooleanField('модель доступна?', default=True, db_index=True)
     created_at = models.DateTimeField('опубликовано', auto_now_add=True, db_index=True)    
@@ -128,8 +130,8 @@ class Product(models.Model):
         super().delete(*args, **kwargs)
 
     class Meta:
-        verbose_name_plural = 'модели'
-        verbose_name = 'модель'
+        verbose_name_plural = 'товары'
+        verbose_name = 'товар'
 
     def __str__(self):
         return self.title
@@ -158,16 +160,5 @@ class CharacteristicProduct(models.Model):
 
     def __str__(self):
         return str(self.characteristic)
-    
 
-class Store(models.Model):
-    model = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, verbose_name="модель")
-    count = models.PositiveIntegerField("количество")
-    price = models.PositiveIntegerField("цена")
 
-    class Meta:
-        verbose_name_plural = 'товары'
-        verbose_name = 'товар'
-
-    def __str__(self):
-        return str(self.model) + " : " + str(self.price)

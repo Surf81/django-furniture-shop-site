@@ -1,0 +1,11 @@
+header h1 {
+    background: url("../img/bg.jpg") left / auto 100% no-repeat, url("../img/bg.jpg") right / auto 100% no-repeat;
+}
+
+img.main-image {
+    width: 300px;
+}
+
+img.additional-image {
+    width: 180px;
+}

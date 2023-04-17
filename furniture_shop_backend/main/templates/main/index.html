@@ -1,7 +1,60 @@
 {% extends 'layout/base.html' %}
 
+{% load static %}
+{% load bootstrap5 %}
+
+{% load store_tags %}
+
 {% block content %}
 
-Привет!
+<div class="d-inline-block">
+
+<h3>Товары, представленные в магазине </h1>
+
+{% for item in store %}
+
+<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="..." class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+            <small><p class="card-text">{{ item.category.title }}</p></small>
+            <h4 class="card-title">{{ item.title }}</h4>
+          <p class="card-text">{{ item.description|truncatewords:50 }}</p>
+          <p class="card-text"><small class="text-muted">Цена: </small>{{ item.price }} руб.</p>
+          <p class="card-text"><small class="text-muted">
+            {% if item.count %}
+            в наличии
+            {% else %}
+            под заказ
+            {% endif %}
+          </small>
+          </p>
+
+          <p class="card-text">Характеристики:</p>
+
+          {% characteristics item.characts_to_public count=3 as characts_to_public %}
+          {% for charact in characts_to_public %}
+          <small>{{ charact.group }}: {{ charact.title }}</small>
+          {% endfor %}
+
+          {% url "main:detail" pk=item.pk as url %}
+          <div class="btn-group" role="group" aria-label="Basic outlined example">
+          {% bootstrap_button "Дeтальное описание" button_type="link" button_class="btn-outline-primary" href=url size="small" %}
+          {% bootstrap_button "Добавить в корзину" button_type="link" button_class="btn-outline-primary" size="small" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endfor %}
+
+{% if is_paginated and page_obj.has_other_pages %}
+{% bootstrap_pagination page_obj %}
+{% endif %}
+</div>
 
 {% endblock content %}

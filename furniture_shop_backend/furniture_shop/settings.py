@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,10 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-s+-51w(8n2oqh$hbvn7iqv)#11#9r&@g^l@yifx9uurfddm$d3"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
-SITE_ID = 2
+INTERNAL_IPS = [
+    "127.0.0.1"
+]
 
 # Application definition
 
@@ -43,7 +45,8 @@ INSTALLED_APPS = [
     "bootstrap5",
     'django_cleanup',
     'easy_thumbnails',
-    
+    "debug_toolbar",
+
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",
 ]
@@ -56,6 +59,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "furniture_shop.urls"
@@ -71,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "main.middlewares.furniture_shop_context_processor",
             ],
         },
     },
@@ -139,8 +144,40 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'static' # Папка в которую монтируется окончательный проект куда будут собраны все статические файлы
+
+STATICFILES_DIRS = [
+    BASE_DIR /  'assets',
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'default': {
+            'size': (96, 96),
+            'crop': 'scale',
+        },
+    },
+}
+
+THUMBNAIL_BASEDIR = 'thumbnails'
+
+ABSOLUTE_URL_OVERRIDES = {
+    'main.product': lambda rec: reverse("detail", kwargs={"pk": rec.pk})
+}
+
+
+# В модуле local_settings.py указаны настройки разработчика
+# В продакшн данный файл не добавляется
+try:
+    from .local_settings import *
+except ImportError:
+    print('локальные настройки отсутствуют')
