@@ -11,6 +11,10 @@
 
 <h3>Товары, представленные в магазине </h1>
 
+{% if category %}
+<h5>Категория: {{ category }}</h5>
+{% endif %}
+
 {% for item in store %}
 
 <div class="card mb-3" style="max-width: 540px;">

@@ -18,9 +18,13 @@
                             <a href="#submenu{{category.super_category.pk}}" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                                 <span class="ms-1 d-sm-inline">{{ category.super_category.title }}</span> </a>
                             <ul class="collapse nav flex-column ms-1" id="submenu{{category.super_category.pk}}" data-bs-parent="#menu">
+                                <li>
+                                    <small><a href="{% url 'main:category' category.super_category.pk %}" class="nav-link px-0">Все {{ category.super_category.title }}</a></small>
+                                </li>
+        
                     {% endifchanged %}
                         <li>
-                            <small><a href="#" class="nav-link px-0"> {{ category.title }}</a></small>
+                            <small><a href="{% url 'main:category' category.pk %}" class="nav-link px-0"> {{ category.title }}</a></small>
                         </li>
                     {% endfor %}    
                         </ul>
