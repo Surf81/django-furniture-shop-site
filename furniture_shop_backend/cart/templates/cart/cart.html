@@ -1,0 +1,70 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+{% load bootstrap5 %}
+
+{% block content %}
+
+<div class="d-inline-block">
+
+<h3>Товары в вашей корзине</h3>
+
+
+<div class="btn-group my-3" role="group" aria-label="Basic outlined example">
+    {% url 'cart:cart_clear' as url_cart_clear %}
+    {% bootstrap_button "Оформить заказ" button_type="link" button_class="btn-outline-primary" %}
+    {% bootstrap_button "Очистить корзину" button_type="link" button_class="btn-outline-primary" href=url_cart_clear %}
+  </div>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Товар</th>
+        <th scope="col">Фото</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Валюта</th>
+        <th scope="col">Сумма</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for item in cart %}
+
+<tr>
+    <th scope="row">{{ forloop.counter }}</th>
+    <td>{{ item.product.title }}</td>
+    <td>Фоточка</td>
+    <td>{{ item.count }}</td>
+    <td>{{ item.price }}</td>
+    <td>руб.</td>
+    <td>{{ item.total_price}}</td>
+    <td>
+        {% url 'cart:cart_add' item.product.id as url_cart_add %}
+        {% url 'cart:cart_del' item.product.id as url_cart_del %}
+        {% bootstrap_button "+1" button_type="link" href=url_cart_add size="small" %}
+        {% if item.count > 1 %}
+        {% url 'cart:cart_sub' item.product.id as url_cart_sub %}
+        {% bootstrap_button "-1" button_type="link" href=url_cart_sub size="small" %}
+        {% else %}
+        {% bootstrap_button "-1" button_type="link" href=url_cart_del size="small" %}
+        {% endif %}
+        {% bootstrap_button "Удалить" button_type="link" href=url_cart_del size="small" %}
+    </td>
+  </tr>
+
+{% endfor %}
+
+<tr>
+    <th scope="row"></th>
+    <td>Всего</td>
+    <td colspan=4></td>
+    <td>{{ cart.get_total_price }}</td>
+    <td>{% bootstrap_button "Очистить корзину" button_type="link" href=url_cart_clear %}</td>
+  </tr>
+</tbody>
+</table>
+
+{% endblock content %}

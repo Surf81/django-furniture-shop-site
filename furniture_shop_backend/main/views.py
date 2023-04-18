@@ -35,8 +35,8 @@ class IndexPageView(ListView):
 
 class CategoryPageView(IndexPageView):
     def get_queryset(self):
-        category_id = self.kwargs['pk']
-        return super().get_queryset().filter(Q(category_id=category_id) | Q(category__super_category_id=category_id))
+        cat_id = self.kwargs['pk']
+        return super().get_queryset().filter(Q(category_id__exact=cat_id) | Q(category__super_category_id__exact=cat_id))
                                              
     def get_context_data(self, **kwargs):
         category_queryset = Category.objects.filter(id__exact=self.kwargs['pk'])

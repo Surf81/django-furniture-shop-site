@@ -28,9 +28,6 @@ SECRET_KEY = "django-insecure-s+-51w(8n2oqh$hbvn7iqv)#11#9r&@g^l@yifx9uurfddm$d3
 DEBUG = False
 
 ALLOWED_HOSTS = []
-INTERNAL_IPS = [
-    "127.0.0.1"
-]
 
 # Application definition
 
@@ -49,6 +46,7 @@ INSTALLED_APPS = [
 
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",
+    "cart.apps.CartConfig",
 ]
 
 MIDDLEWARE = [
@@ -76,6 +74,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "main.middlewares.furniture_shop_context_processor",
+                "cart.middlewares.furniture_shop_context_processor",
             ],
         },
     },
@@ -173,6 +172,9 @@ THUMBNAIL_BASEDIR = 'thumbnails'
 ABSOLUTE_URL_OVERRIDES = {
     'main.product': lambda rec: reverse("detail", kwargs={"pk": rec.pk})
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+CART_SESSION_ID = "cart"
 
 
 # В модуле local_settings.py указаны настройки разработчика

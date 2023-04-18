@@ -1,5 +1,6 @@
 {% load bootstrap5 %}
 {% load static %}
+{% load cart_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>{% block title%}Главная{% endblock title %} - Доска объявлений</title>
     {% bootstrap_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'cart/css/cart_style.css' %}">
     {% bootstrap_javascript %}
 </head>
 <body class="container-fluid">
@@ -50,7 +52,8 @@
         <div class="row">
             <ul class="col nav nav-pills justify-content-end border">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Корзина</a>
+                    {% url 'cart:cart_view' as url %}
+                    {% cart_widget "Корзина" cart cls="nav-link" href=url %}
                 </li>
             </ul>
         </div>

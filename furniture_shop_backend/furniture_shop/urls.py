@@ -26,6 +26,7 @@ urlpatterns = [
     path("admin/login/", EmailLoginView.as_view(template_name="advuser/admin-login.html")),
     path("admin/", admin.site.urls),
     path("auth/", include('advuser.urls')),
+    path("cart/", include('cart.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     path("", include('main.urls')),
 ]

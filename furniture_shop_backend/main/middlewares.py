@@ -5,8 +5,8 @@ def furniture_shop_context_processor(request):
     context = {}
     context['categories'] = (SubCategory.objects
                              .select_related('super_category')
-                             .annotate(products=Count('product'))
-                             .filter(products__gt=0)
+                             .annotate(product_count=Count('product'))
+                             .filter(product_count__gt=0)
                              .order_by(*SubCategory._meta.ordering)
     )
     return context

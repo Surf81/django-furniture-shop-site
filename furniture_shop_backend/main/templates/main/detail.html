@@ -99,7 +99,7 @@
       tabindex="0"
     >
     Фоточки
-    <img src="..." class="card-img-top" alt="..." />
+    <img src="" class="card-img-top" alt="..." />
 
 
     </div>
@@ -112,7 +112,8 @@
     {% url 'main:index' as url %} 
     {% bootstrap_button "Вернуться обратно" button_type="link" button_class="btn-outline-primary" href=url size="small" %} 
     {% endif %} 
-    {% bootstrap_button "Добавить в корзину" button_type="link" button_class="btn-outline-primary" size="small" %}
+    {% url 'cart:cart_add' pk=item.pk as url_cart_add %}
+    {% bootstrap_button "Добавить в корзину" button_type="link" button_class="btn-outline-primary" href=url_cart_add size="small" %}
   </div>
 </div>
 
