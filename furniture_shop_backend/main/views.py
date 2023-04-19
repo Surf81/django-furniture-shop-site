@@ -9,7 +9,7 @@ from django.db.models.query import Prefetch
 from django.db.models.functions import Concat
 from django.db.models import F, Q
 
-from .models import Product, CharacteristicItem, Category
+from .models import Product, CharacteristicItem, Category, AdditionalImage
 
 
 
@@ -49,6 +49,7 @@ class CategoryPageView(IndexPageView):
    
 
 class DetailPageView(DetailView):
+    CONTEXT_OBJECT_NAME = 'item'
     prefetch = Prefetch('characteristics',
                         queryset=(CharacteristicItem.objects
                                   .annotate(value=F('characteristicproduct__value'))
@@ -61,8 +62,14 @@ class DetailPageView(DetailView):
                 .filter(is_active__exact=True)
                 .prefetch_related(prefetch)
     )
-    context_object_name = "item"
+    context_object_name = CONTEXT_OBJECT_NAME
     template_name = "main/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        images = AdditionalImage.objects.filter(product_id=context[self.CONTEXT_OBJECT_NAME].pk)
+        context['additional_images'] = images
+        return context
 
 
 def any_page(request, url):

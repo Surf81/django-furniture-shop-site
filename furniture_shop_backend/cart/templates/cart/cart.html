@@ -36,7 +36,13 @@
 <tr>
     <th scope="row">{{ forloop.counter }}</th>
     <td>{{ item.product.title }}</td>
-    <td>Фоточка</td>
+    <td>
+        {% if item.product.image %}
+        <img src="{{ item.product.image.url }}" class="img-fluid rounded-start main-image">
+        {% else %}
+        <img src="{% static image_stub %}" class="img-fluid rounded-start main-image">
+        {% endif %}
+</td>
     <td>{{ item.count }}</td>
     <td>{{ item.price }}</td>
     <td>руб.</td>

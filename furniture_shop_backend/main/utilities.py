@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from os.path import splitext
 
 

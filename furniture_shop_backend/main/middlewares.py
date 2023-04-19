@@ -1,5 +1,6 @@
 from .models import SubCategory
 from django.db.models import Count
+from furniture_shop import settings
 
 def furniture_shop_context_processor(request):
     context = {}
@@ -9,4 +10,5 @@ def furniture_shop_context_processor(request):
                              .filter(product_count__gt=0)
                              .order_by(*SubCategory._meta.ordering)
     )
+    context['image_stub'] = settings.IMAGE_STUB_URL
     return context
