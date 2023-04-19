@@ -95,9 +95,10 @@ def any_page(request, url):
 
 @login_required
 def favorite_toggle(request, pk):
-    product, _ = UserProductRelated.objects.get_or_create(product=pk, user=request.user.pk)
-    product.is_favorit = not product.is_favorit
-    product.save()
+    product = Product.objects.get(pk=pk)
+    productrelated, _ = UserProductRelated.objects.get_or_create(product=product, user=request.user)
+    productrelated.is_favorit = not productrelated.is_favorit
+    productrelated.save()
 
     if (path := request.META.get('HTTP_REFERER')):
         return redirect(path)

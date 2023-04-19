@@ -169,3 +169,6 @@ class UserProductRelated(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     count_on_cart = models.PositiveIntegerField("в корзине", default=0, null=False)
     is_favorit = models.BooleanField('избранное', default=False, null=False)
+
+    def __str__(self):
+        return f"{self.user} : {self.product}"
