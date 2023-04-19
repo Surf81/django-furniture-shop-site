@@ -28,6 +28,8 @@
       </div>
       <div class="col-md-6">
         <div class="card-body">
+            {% url 'main:favorite_toggle' pk=item.pk as url %}
+            {% favorite_widget item href=url favorite_class="favorite" %}
             <small><p class="card-text">{{ item.category.title }}</p></small>
             <h4 class="card-title">{{ item.title }}</h4>
           <p class="card-text">{{ item.description|truncatewords:50 }}</p>

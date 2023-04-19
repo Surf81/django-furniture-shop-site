@@ -3,6 +3,7 @@ from django.db.models.functions import Lower
 from django.forms import ValidationError
 
 from main.utilities import get_timestamp_path
+from advuser.models import AdvancedUser
 
 
 class Category(models.Model):
@@ -123,6 +124,7 @@ class Product(models.Model):
     changed_at = models.DateTimeField('опубликовано', auto_now=True, db_index=True)    
     category = models.ForeignKey(SubCategory, on_delete=models.PROTECT, null=False, verbose_name="категория")
     characteristics = models.ManyToManyField(CharacteristicItem, through="CharacteristicProduct")
+    buyers = models.ManyToManyField(AdvancedUser, through="UserProductRelated")
 
     def delete(self, *args, **kwargs):
         for ai in self.additionalimage_set.all():
@@ -162,3 +164,8 @@ class CharacteristicProduct(models.Model):
         return str(self.characteristic)
 
 
+class UserProductRelated(models.Model):
+    user = models.ForeignKey(AdvancedUser, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    count_on_cart = models.PositiveIntegerField("в корзине", default=0, null=False)
+    is_favorit = models.BooleanField('избранное', default=False, null=False)

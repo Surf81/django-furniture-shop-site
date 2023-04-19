@@ -4,7 +4,8 @@ from .forms import SubCategoryForm, CharacteristicItemForm
 from .models import (SuperCategory, SubCategory, 
                      CharacteristicItem, CharacteristicGroup, 
                      Product, AdditionalImage, 
-                     CharacteristicProduct)
+                     CharacteristicProduct,
+                     UserProductRelated)
 
 
 class SubCategoryInline(admin.TabularInline):
@@ -55,3 +56,7 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'changed_at')
     inlines = (AdditionalImageInline, CharacteristicsInline)
 
+
+@admin.register(UserProductRelated)
+class UserProductRelatedAdmin(admin.ModelAdmin):
+    pass

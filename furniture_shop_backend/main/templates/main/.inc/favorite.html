@@ -1,0 +1,13 @@
+{% load static %}
+
+{% if favorite.visible %}
+<div class="{{ favorite.class }}">
+    <a href="{{ favorite.href }}">
+        {% if favorite.is_favorite %}
+        <img src="{% static 'main/img/favorit_yes.png' %}" alt="Товар находится в избранном">
+        {% else %}
+        <img src="{% static 'main/img/favorit_no.png' %}" alt="Нажмите чтобы поместить в избранное">
+        {% endif %}
+    </a>
+</div>
+{% endif %}

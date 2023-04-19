@@ -1,0 +1,11 @@
+.favorite {
+    margin-left: auto;
+    margin-right: 0;
+    float: right;
+}
+
+.favorite img {
+    width: 50px;   
+    margin-left: auto;
+    margin-right: 0;     
+}

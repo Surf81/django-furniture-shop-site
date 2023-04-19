@@ -1,0 +1,56 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+{% load bootstrap5 %}
+
+
+{% block title %}Список избранного{% endblock title %}
+
+{% block content %}
+
+<div class="d-inline-block">
+
+<h3>Товары в списке избранного</h3>
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Товар</th>
+        <th scope="col">Фото</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Валюта</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for item in favorite_products %}
+
+<tr>
+    <th scope="row">{{ forloop.counter }}</th>
+    <td>{{ item.title }}</td>
+    <td>
+        {% if item.image %}
+        <img src="{{ item.image.url }}" class="img-fluid rounded-start main-image">
+        {% else %}
+        <img src="{% static image_stub %}" class="img-fluid rounded-start main-image">
+        {% endif %}
+    </td>
+    <td>{{item.price}}</td>
+    <td>руб.</td>
+    <td>
+      {% url 'main:favorite_toggle' pk=item.pk as url_favorite_toggle %}
+        {% url 'cart:cart_add' pk=item.pk as url_cart_add %}
+        {% bootstrap_button "Добавить в коризу" button_type="link" href=url_cart_add size="small" %}
+        {% bootstrap_button "Удалить из избанного" button_type="link" href=url_favorite_toggle size="small" %}
+    </td>
+  </tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+{% endblock content %}

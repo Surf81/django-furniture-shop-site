@@ -1,21 +1,22 @@
 from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.http.response import HttpResponseNotFound
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.db.models.query import Prefetch
-from django.db.models.functions import Concat
-from django.db.models import F, Q
+from django.db.models import F, Q, Case, When, BooleanField
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Product, CharacteristicItem, Category, AdditionalImage
+from .models import Product, CharacteristicItem, Category, AdditionalImage, UserProductRelated
 
 
 
 
 class IndexPageView(ListView):
-    prefetch = Prefetch('characteristics',
+    prefetch_characteristics = Prefetch('characteristics',
                         queryset=(CharacteristicItem.objects
                                   .annotate(value=F('characteristicproduct__value'))
                                   .select_related('group',)
@@ -26,11 +27,23 @@ class IndexPageView(ListView):
     queryset = (Product.objects
                 .select_related('category')
                 .filter(is_active__exact=True)
-                .prefetch_related(prefetch)
+                .prefetch_related(prefetch_characteristics)
     )
     template_name = "main/index.html"
     context_object_name = 'store'
     paginate_by = 2
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return (super().get_queryset()
+                          .annotate(favorite=Case(
+                            When(id__in=self.request.user.userproductrelated_set.filter(is_favorit__exact=True).values('product__id'), then=True),
+                            default=False,
+                            output_field=BooleanField()
+                          ))
+            )
+        return super().get_queryset()
+    
 
 
 class CategoryPageView(IndexPageView):
@@ -79,4 +92,24 @@ def any_page(request, url):
     except TemplateDoesNotExist:
         return HttpResponseNotFound(request)
 
+
+@login_required
+def favorite_toggle(request, pk):
+    product, _ = UserProductRelated.objects.get_or_create(product=pk, user=request.user.pk)
+    product.is_favorit = not product.is_favorit
+    product.save()
+
+    if (path := request.META.get('HTTP_REFERER')):
+        return redirect(path)
+    else:
+        return redirect('main:index')
+    
+
+class FavoriteProductsView(LoginRequiredMixin, ListView):
+    template_name = 'main/favorite_products.html'
+    context_object_name = 'favorite_products'
+    
+    def get_queryset(self):
+        queryset = Product.objects.filter(userproductrelated__user=self.request.user.pk, userproductrelated__is_favorit__exact=True)
+        return queryset
 

@@ -149,7 +149,7 @@ STATICFILES_DIRS = [
     BASE_DIR /  'assets',
 ]
 
-IMAGE_STUB_URL = "img/stub.jpg"
+IMAGE_STUB_URL = "main/img/stub.jpg"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
