@@ -7,6 +7,9 @@
 <div class="d-inline-block">
   <div class="card mb-3"  style="max-width: 800px;">
     <div class="card-body">
+      {% url 'main:favorite_toggle' pk=item.pk as url %}
+      {% favorite_widget item href=url favorite_class="favorite" %}
+
       <small><p class="card-text">{{ item.category.title }}</p></small>
       <h4 class="card-title">{{ item.title }}</h4>
       <p class="card-text">

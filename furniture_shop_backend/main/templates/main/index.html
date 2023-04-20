@@ -53,8 +53,8 @@
           {% url "main:detail" pk=item.pk as url_detail %}
           {% url "cart:cart_add" pk=item.pk as url_cart_add %}
           <div class="btn-group" role="group" aria-label="Basic outlined example">
-          {% bootstrap_button "Дeтальное описание" button_type="link" button_class="btn-outline-primary" href=url_detail size="small" %}
-          {% bootstrap_button "Добавить в корзину" button_type="link" button_class="btn-outline-primary" href=url_cart_add size="small" %}
+            {% bootstrap_button "Дeтальное описание" button_type="link" button_class="btn-outline-primary" href=url_detail size="small" %}
+            {% bootstrap_button "Добавить в корзину" button_type="link" button_class="btn-outline-primary" href=url_cart_add size="small" %}
           </div>
         </div>
       </div>

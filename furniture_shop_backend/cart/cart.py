@@ -22,7 +22,7 @@ class Cart:
 
     def save(self, prod):
         def productrelated_save(prod_pk):
-            if not(product := self.cart[prod_pk].get('product')):
+            if not(product := self.cart.get(prod_pk, dict()).get('product')):
                 product = Product.objects.get(pk=prod_pk)
             productrelated, _ = UserProductRelated.objects.get_or_create(product=product, user=self.request.user)
             productrelated.count_on_cart = int(self.cart.get(prod_pk, dict()).get('count', 0))

@@ -78,6 +78,17 @@ class DetailPageView(DetailView):
     context_object_name = CONTEXT_OBJECT_NAME
     template_name = "main/detail.html"
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return (super().get_queryset()
+                          .annotate(favorite=Case(
+                            When(id__in=self.request.user.userproductrelated_set.filter(is_favorit__exact=True).values('product__id'), then=True),
+                            default=False,
+                            output_field=BooleanField()
+                          ))
+            )
+        return super().get_queryset()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         images = AdditionalImage.objects.filter(product_id=context[self.CONTEXT_OBJECT_NAME].pk)

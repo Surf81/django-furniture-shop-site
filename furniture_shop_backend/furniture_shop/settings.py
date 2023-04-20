@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'easy_thumbnails',
     "debug_toolbar",
+    "rest_framework",
 
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",

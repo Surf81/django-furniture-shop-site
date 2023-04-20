@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.views import serve
 
+
 urlpatterns = [
     path("admin/login/", EmailLoginView.as_view(template_name="advuser/admin-login.html")),
     path("admin/", admin.site.urls),
