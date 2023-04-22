@@ -1,0 +1,1 @@
+Поступила жалоба на {{ comment.product.title }}

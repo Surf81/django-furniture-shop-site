@@ -37,10 +37,9 @@ class ProductSerializerTestCase(TestCase):
                 'count': 1,
                 'price': 10000,
                 'image': None,
-                'is_active': True,
-                'category': self.category2.pk,
+                'category_id': self.category2.pk,
+                'category_name': 'Обычный диван',
                 'characteristics': [],
-                'buyers': [],
             },
             {
                 'id': self.product2.pk,
@@ -49,10 +48,9 @@ class ProductSerializerTestCase(TestCase):
                 'count': 1,
                 'price': 100000,
                 'image': None,
-                'is_active': True,
-                'category': self.category1.pk,
+                'category_id': self.category1.pk,
+                'category_name': 'VIP диван',
                 'characteristics': [],
-                'buyers': [],
             },
         ]
         self.assertEqual(expected_data, serializer_data)

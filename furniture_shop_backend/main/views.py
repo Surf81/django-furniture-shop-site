@@ -9,10 +9,11 @@ from django.db.models.query import Prefetch
 from django.db.models import F, Q, Case, When, BooleanField
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
-from .models import Product, CharacteristicItem, Category, AdditionalImage, UserProductRelated
 
-
+from .models import Product, CharacteristicItem, Category, AdditionalImage, UserProductRelated, Comment
+from .forms import UserCommentForm, GuestCommentForm
 
 
 class IndexPageView(ListView):
@@ -43,7 +44,6 @@ class IndexPageView(ListView):
                           ))
             )
         return super().get_queryset()
-    
 
 
 class CategoryPageView(IndexPageView):
@@ -91,9 +91,34 @@ class DetailPageView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        images = AdditionalImage.objects.filter(product_id=context[self.CONTEXT_OBJECT_NAME].pk)
+        images = AdditionalImage.objects.filter(product=context[self.CONTEXT_OBJECT_NAME].pk)
         context['additional_images'] = images
+
+        comments = Comment.objects.filter(product=context[self.CONTEXT_OBJECT_NAME].pk, is_active=True)
+        initial = {'product': context[self.CONTEXT_OBJECT_NAME].pk}
+        if self.request.user.is_authenticated:
+            initial['author'] = self.request.user.username
+            initial['is_anonimous'] = False
+            form_class = UserCommentForm
+        else:
+            initial['author'] = Comment.ANONIMOUS_NAME
+            initial['is_anonimous'] = True
+            form_class = GuestCommentForm
+
+        form = form_class(initial=initial)
+        if self.request.method == 'POST':
+            c_form = form_class(self.request.POST)
+            if c_form.is_valid():
+                c_form.save()
+                messages.add_message(self.request, messages.SUCCESS, 'Комментарий добавлен')
+            else:
+                form = c_form
+                messages.add_message(self.request, messages.WARNING, 'Комментарий не добавлен')
+
+        context.update({'comments': comments, 'comment_form': form})
         return context
+
+    post = DetailView.get
 
 
 def any_page(request, url):

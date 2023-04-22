@@ -1,0 +1,3 @@
+Поступила новая жалоба на товар {{ comment.product.title }}
+Для просмотра пройдите по ссылке
+{{host}}{% url 'main:detail' pk=comment.product.pk %}

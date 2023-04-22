@@ -29,6 +29,8 @@ urlpatterns = [
     path("auth/", include('advuser.urls')),
     path("cart/", include('cart.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
+    path("api/", include('main.urls_api')),
+    path('captcha/', include('captcha.urls')),
     path("", include('main.urls')),
 ]
 

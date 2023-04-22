@@ -135,7 +135,6 @@
 
     </div>
   </div>
-
   <div class="btn-group" role="group" aria-label="Basic outlined example">
     {% if request.META.HTTP_REFERER %} 
     {% bootstrap_button "Вернуться обратно" button_type="link" button_class="btn-outline-primary" href=request.META.HTTP_REFERER size="small" %} 
@@ -148,4 +147,21 @@
   </div>
 </div>
 
+<h4 class="mt-5">Новый комментарий</h4>
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form comment_form layout='horisontal' %}
+    {% buttons submit='Добавить' %}{% endbuttons %}
+</form>
+{% if comments %}
+<div class="mt-5">
+    {% for comment in comments %}
+    <div class="my-2 p-2 border">
+        <h5>{{ comment.author }}</h5>
+        <p>{{ comment.content }}</p>
+        <p class="text-right font-italic">{{ comment.created_at }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock content %}

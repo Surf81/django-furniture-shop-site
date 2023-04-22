@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     "debug_toolbar",
     "rest_framework",
+    "captcha",
 
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",
@@ -128,6 +129,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
+QUALITY_CONTROL_SERVISE_EMAIL = "qualyty_control@furnitureshop.ru"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

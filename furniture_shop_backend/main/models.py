@@ -1,8 +1,9 @@
 from django.db import models
 from django.db.models.functions import Lower
 from django.forms import ValidationError
+from django.db.models.signals import post_save
 
-from main.utilities import get_timestamp_path
+from main.utilities import get_timestamp_path, send_claim_notification
 from advuser.models import AdvancedUser
 
 
@@ -172,3 +173,27 @@ class UserProductRelated(models.Model):
 
     def __str__(self):
         return f"{self.user} : {self.product}"
+    
+
+class Comment(models.Model):
+    ANONIMOUS_NAME = 'аноним'
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="товар")
+    author = models.CharField('автор', max_length=150)
+    is_anonimous = models.BooleanField('оставаться анонимным?', default=False)
+    content = models.TextField('содержание')
+    is_active = models.BooleanField('выводить на экран?', default=True, db_index=True)
+    is_claim = models.BooleanField('жалоба', default=False, db_index=True)
+    created_at = models.DateTimeField('опубликован', auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name_plural = 'комментарии'
+        verbose_name = 'комментарий'
+        ordering = ['created_at']
+
+
+def post_save_dispatcher(sender, **kwargs):
+    if kwargs['created'] and kwargs['instance'].is_claim:
+        send_claim_notification(kwargs['instance'])
+
+post_save.connect(post_save_dispatcher, sender=Comment)

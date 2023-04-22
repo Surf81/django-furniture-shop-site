@@ -26,7 +26,7 @@ class MainAPITestCase(APITestCase):
                                                category=self.category1)
 
     def test_get(self):
-        url = reverse('main:product-list')
+        url = reverse('api:product-list')
         response = self.client.get(url)
         serializer_data = ProductSerializer([self.product1, self.product2], many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
