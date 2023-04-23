@@ -7,13 +7,26 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.db.models.query import Prefetch
 from django.db.models import F, Q, Case, When, BooleanField
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+
+from main.utilities import user_is_staff
 
 
-from .models import Product, CharacteristicItem, Category, AdditionalImage, UserProductRelated, Comment
-from .forms import UserCommentForm, GuestCommentForm
+from .models import (Product, 
+                     CharacteristicItem, 
+                     Category, 
+                     AdditionalImage, 
+                     UserProductRelated, 
+                     Comment)
+from .forms import (UserCommentForm, 
+                    GuestCommentForm, 
+                    CreateProductForm, 
+                    EditProductForm, 
+                    AdditionalImageFormSet, 
+                    SelectCharacteristicFormSet)
 
 
 class IndexPageView(ListView):
@@ -21,6 +34,7 @@ class IndexPageView(ListView):
                         queryset=(CharacteristicItem.objects
                                   .annotate(value=F('characteristicproduct__value'))
                                   .select_related('group',)
+                                  .distinct()
                                   ),
                         to_attr="characts_to_public"
                         )
@@ -67,6 +81,7 @@ class DetailPageView(DetailView):
                         queryset=(CharacteristicItem.objects
                                   .annotate(value=F('characteristicproduct__value'))
                                   .select_related('group',)
+                                  .distinct()
                                   ),
                         to_attr="characts_to_public"
                         )
@@ -136,7 +151,9 @@ def favorite_toggle(request, pk):
     productrelated.is_favorit = not productrelated.is_favorit
     productrelated.save()
 
-    if (path := request.META.get('HTTP_REFERER')):
+    if (next := request.GET.get('next')):
+        return redirect(next)
+    elif (path := request.META.get('HTTP_REFERER')):
         return redirect(path)
     else:
         return redirect('main:index')
@@ -149,4 +166,79 @@ class FavoriteProductsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Product.objects.filter(userproductrelated__user=self.request.user.pk, userproductrelated__is_favorit__exact=True)
         return queryset
+
+
+@user_passes_test(user_is_staff)
+def product_create_view(request):
+    if request.method == 'POST':
+        product_form = CreateProductForm(data=request.POST, files=request.FILES)
+        if product_form.is_valid():
+            product = product_form.save()
+            image_form = AdditionalImageFormSet(data=request.POST, files=request.FILES, instance=product)
+            characteristic_form = SelectCharacteristicFormSet(data=request.POST, instance=product)
+            if characteristic_form.is_valid():
+                characteristic_form.save()
+            if image_form.is_valid():
+                image_form.save()
+                messages.add_message(request, messages.SUCCESS, 'Товар добавлен')
+            else:
+                messages.add_message(request, messages.SUCCESS, 'Товар добавлен без изображений поскольку основное изображение не выбрано')
+            return redirect('main:detail', pk=product.pk)
+
+        messages.add_message(request, messages.WARNING, 'Товар не добавлен')
+    else:
+        product_form = CreateProductForm()
+        image_form = AdditionalImageFormSet()
+        characteristic_form = SelectCharacteristicFormSet()
+
+    context = {
+        'product_form': product_form,
+        'image_form': image_form,
+        'characteristic_form': characteristic_form,
+    }
+
+    return render(request, 'main/product_create.html', context)
+
+
+@user_passes_test(user_is_staff)
+def product_edit_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product_form = EditProductForm(data=request.POST, files=request.FILES, instance=product)
+        if product_form.is_valid():
+            product_form.save()
+            image_form = AdditionalImageFormSet(data=request.POST, files=request.FILES, instance=product)
+            characteristic_form = SelectCharacteristicFormSet(data=request.POST, instance=product)
+            if characteristic_form.is_valid():
+                characteristic_form.save()
+            if image_form.is_valid():
+                image_form.save()
+                messages.add_message(request, messages.SUCCESS, 'Товар добавлен')
+            else:
+                messages.add_message(request, messages.SUCCESS, 'Товар добавлен без изображений поскольку основное изображение не выбрано')
+            return redirect('main:detail', pk=product.pk)
+
+        messages.add_message(request, messages.WARNING, 'Товар не добавлен')
+    else:
+        product_form = EditProductForm(instance=product)
+        image_form = AdditionalImageFormSet(instance=product)
+        characteristic_form = SelectCharacteristicFormSet(instance=product)
+
+    context = {
+        'product_form': product_form,
+        'image_form': image_form,
+        'characteristic_form': characteristic_form,
+    }
+
+    return render(request, 'main/product_edit.html', context)
+
+
+@user_passes_test(user_is_staff)
+def product_del_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        messages.add_message(request, messages.SUCCESS, 'Товар удален')
+
+    return redirect('main:index')
 

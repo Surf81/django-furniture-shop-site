@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "advuser.apps.AdvuserConfig",
     "main.apps.MainConfig",
     "cart.apps.CartConfig",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -136,7 +137,7 @@ QUALITY_CONTROL_SERVISE_EMAIL = "qualyty_control@furnitureshop.ru"
 
 LANGUAGE_CODE = "ru"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 

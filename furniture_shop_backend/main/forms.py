@@ -1,7 +1,10 @@
 from django import forms
 from captcha.fields import CaptchaField
 
-from main.models import (SuperCategory, SubCategory, CharacteristicGroup, CharacteristicItem, Comment)
+from main.models import (Product, AdditionalImage,
+                         SuperCategory, SubCategory, 
+                         CharacteristicGroup, CharacteristicItem, CharacteristicProduct,
+                         Comment)
 
 
 class SubCategoryForm(forms.ModelForm):
@@ -51,3 +54,38 @@ class GuestCommentForm(UserCommentBaseForm):
     class Meta(UserCommentBaseForm.Meta):
         exclude = ('is_active', 'is_anonimous')
 
+
+class CreateProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('category', 'title', 'description', 'count', 'price', 'image')
+
+class EditProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('category', 'title', 'description', 'count', 'price', 'is_active', 'image')
+
+
+class AdditionalImageForm(forms.ModelForm):
+    class Meta:
+        model = AdditionalImage
+        fields = '__all__'
+        widgets = {'product': forms.HiddenInput}
+
+    def clean(self):
+        super().clean()
+        errors = {}
+        if self.cleaned_data['image'] and not self.cleaned_data['product'].image:
+            errors['image'] = forms.ValidationError("Не выбрано основное изображение")
+        if errors:
+            raise forms.ValidationError(errors)
+
+AdditionalImageFormSet = forms.inlineformset_factory(Product, AdditionalImage, form=AdditionalImageForm, extra=3, can_delete=False)
+
+class SelectCharacteristicForm(forms.ModelForm):
+    class Meta:
+        model = CharacteristicProduct
+        fields = ('characteristic', 'value', 'product')
+        widgets = {'product': forms.HiddenInput}
+
+SelectCharacteristicFormSet = forms.inlineformset_factory(Product, CharacteristicProduct, form=SelectCharacteristicForm, extra=3, can_delete=False)

@@ -32,7 +32,7 @@ class Cart:
             self.session[settings.CART_SESSION_ID] = self.cart
             self.session.modifed = True
         else:
-            if hasattr(prod, '__iter__'):
+            if not isinstance(prod, str) and hasattr(prod, '__iter__'):
                 for prod_pk in prod:
                     productrelated_save(prod_pk)
             else:

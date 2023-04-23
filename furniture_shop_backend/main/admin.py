@@ -60,3 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(UserProductRelated)
 class UserProductRelatedAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(CharacteristicProduct)
+class CharacteristicProductAdmin(admin.ModelAdmin):
+    pass

@@ -21,4 +21,6 @@ def send_claim_notification(comment):
 
     send_mail(subject, body_text, settings.EMAIL_HOST_USER, [settings.QUALITY_CONTROL_SERVISE_EMAIL])
 
-        
+
+def user_is_staff(user):
+    return user.is_staff

@@ -17,14 +17,18 @@
 
 {% for item in store %}
 
+{% url "main:detail" pk=item.pk as url_detail %}
+
 <div class="card mb-3" style="max-width: 800px;">
     <div class="row g-0">
       <div class="col-md-6">
+        <a href="{{ url_detail }}">
           {% if item.image %}
             <img src="{{ item.image.url }}" class="img-fluid rounded-start main-image">
           {% else %}
             <img src="{% static image_stub %}" class="img-fluid rounded-start main-image">
           {% endif %}
+        </a>
       </div>
       <div class="col-md-6">
         <div class="card-body">
@@ -44,13 +48,11 @@
           </p>
 
           <p class="card-text">Характеристики:</p>
+          
+          <ul>
+            {% characteristics_as_ul item.characts_to_public count=3 %}
+          </ul>
 
-          {% characteristics item.characts_to_public count=3 as characts_to_public %}
-          {% for charact in characts_to_public %}
-          <small>{{ charact.group }}: {{ charact.title }}</small>
-          {% endfor %}
-
-          {% url "main:detail" pk=item.pk as url_detail %}
           {% url "cart:cart_add" pk=item.pk as url_cart_add %}
           <div class="btn-group" role="group" aria-label="Basic outlined example">
             {% bootstrap_button "Дeтальное описание" button_type="link" button_class="btn-outline-primary" href=url_detail size="small" %}
@@ -66,6 +68,18 @@
 {% if is_paginated and page_obj.has_other_pages %}
 {% bootstrap_pagination page_obj %}
 {% endif %}
+
+<div class="btn-group" role="group" aria-label="Basic outlined example">
+  {% if user.is_staff  %}
+
+  {% url 'main:product_create' as url_create %} 
+  {% bootstrap_button "Добавить новый товар" button_type="link" button_class="btn-outline-primary" href=url_create size="small" %}
+
+  {% endif %}
 </div>
+
+
+</div>
+
 
 {% endblock content %}

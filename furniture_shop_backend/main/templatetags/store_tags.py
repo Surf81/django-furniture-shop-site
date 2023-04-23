@@ -2,16 +2,28 @@ from django import template
 
 register = template.Library()
 
-@register.simple_tag()
-def characteristics(characts, count=None):
-
-
+@register.inclusion_tag("main/.inc/characteristics_as_ul.html", takes_context=False)
+def characteristics_as_ul(characts, count=None):
     if count:
         characts = characts[:count]
 
-    return [{"group": charact.group, 
-             "title": charact.title if charact.type == 1 else f"{charact.value} {charact.title}"
-            }  for charact in characts]
+    to_public = list()
+    for charact in characts:
+        if charact.type == 1:
+            title = charact.title 
+        else:
+            if hasattr(charact, 'value'):
+                title = f"{charact.value} {charact.title}"
+            else:
+                title = f"- {charact.title}"
+        to_public.append({
+            "group": charact.group, 
+            "title": title
+        })
+
+    return {'characteristics': {
+        'list': to_public
+    }}
 
 
 @register.inclusion_tag("main/.inc/favorite.html", takes_context=True)
