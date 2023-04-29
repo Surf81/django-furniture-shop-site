@@ -20,10 +20,7 @@ class ProductSerializer(serializers.ModelSerializer):
                   'category_id', 'category_name', 'characteristics')
 
 
-class ProductDetailSerialiser(serializers.ModelSerializer):
-    category_id = serializers.IntegerField(source='category.id')
-    category_name = serializers.CharField(source='category.title')
-    characteristics = CharacteristicItemSerializer(many=True)
+class ProductDetailSerializer(ProductSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'count', 'price', 'image', 
@@ -32,6 +29,8 @@ class ProductDetailSerialiser(serializers.ModelSerializer):
 
         
 class CommentSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    created_at = serializers.ReadOnlyField()
     class Meta:
         model = Comment
-        fields = ('product', 'author', 'content', 'created_at')        
+        fields = ('id', 'product', 'author', 'content', 'created_at')        

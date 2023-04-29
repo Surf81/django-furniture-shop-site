@@ -124,7 +124,7 @@ class Product(models.Model):
     created_at = models.DateTimeField('опубликовано', auto_now_add=True, db_index=True)    
     changed_at = models.DateTimeField('опубликовано', auto_now=True, db_index=True)    
     category = models.ForeignKey(SubCategory, on_delete=models.PROTECT, null=False, verbose_name="категория")
-    characteristics = models.ManyToManyField(CharacteristicItem, through="CharacteristicProduct")
+    characteristics = models.ManyToManyField(CharacteristicItem, through="CharacteristicProductRelated")
     buyers = models.ManyToManyField(AdvancedUser, through="UserProductRelated")
 
     def delete(self, *args, **kwargs):
@@ -149,7 +149,7 @@ class AdditionalImage(models.Model):
         verbose_name = 'дополнительное изображение'
 
 
-class CharacteristicProduct(models.Model):
+class CharacteristicProductRelated(models.Model):
     value = models.IntegerField('значение', null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
     characteristic = models.ForeignKey(CharacteristicItem, on_delete=models.CASCADE, null=False, verbose_name="характеристика")

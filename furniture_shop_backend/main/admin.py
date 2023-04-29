@@ -4,7 +4,7 @@ from .forms import SubCategoryForm, CharacteristicItemForm
 from .models import (SuperCategory, SubCategory, 
                      CharacteristicItem, CharacteristicGroup, 
                      Product, AdditionalImage, 
-                     CharacteristicProduct,
+                     CharacteristicProductRelated,
                      UserProductRelated)
 
 
@@ -46,7 +46,7 @@ class AdditionalImageInline(admin.TabularInline):
     model = AdditionalImage
 
 class CharacteristicsInline(admin.TabularInline):
-    model = CharacteristicProduct
+    model = CharacteristicProductRelated
 
 
 @admin.register(Product)
@@ -61,6 +61,6 @@ class ProductAdmin(admin.ModelAdmin):
 class UserProductRelatedAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(CharacteristicProduct)
-class CharacteristicProductAdmin(admin.ModelAdmin):
+@admin.register(CharacteristicProductRelated)
+class CharacteristicProductRelatedAdmin(admin.ModelAdmin):
     pass

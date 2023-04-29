@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -8,7 +8,10 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 
 from main.models import Product, Comment
-from .serializers import ProductSerializer, ProductDetailSerialiser, CommentSerializer
+from .serializers import (ProductSerializer, 
+                          ProductDetailSerializer, 
+                          CommentSerializer
+)
 
 
 class ProductViewSet(ModelViewSet):
@@ -19,12 +22,12 @@ class ProductViewSet(ModelViewSet):
 
 class ProductDetailView(RetrieveAPIView):
     queryset = Product.objects.filter(is_active=True)
-    serializer_class = ProductDetailSerialiser
+    serializer_class = ProductDetailSerializer
 
 
 @api_view(['GET', 'POST'])
 @permission_classes((IsAuthenticatedOrReadOnly,))
-def comments(request, pk):
+def comment_CR_api(request):
     if request.method == 'POST':
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -33,6 +36,6 @@ def comments(request, pk):
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
     else:
-        comments = Comment.objects.filter(is_active=True, bb=pk)
+        comments = Comment.objects.filter(is_active=True)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)

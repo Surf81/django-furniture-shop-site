@@ -32,7 +32,7 @@ from .forms import (UserCommentForm,
 class IndexPageView(ListView):
     prefetch_characteristics = Prefetch('characteristics',
                         queryset=(CharacteristicItem.objects
-                                  .annotate(value=F('characteristicproduct__value'))
+                                  .annotate(value=F('characteristicproductrelated__value'))
                                   .select_related('group',)
                                   .distinct()
                                   ),
@@ -79,7 +79,7 @@ class DetailPageView(DetailView):
     CONTEXT_OBJECT_NAME = 'item'
     prefetch = Prefetch('characteristics',
                         queryset=(CharacteristicItem.objects
-                                  .annotate(value=F('characteristicproduct__value'))
+                                  .annotate(value=F('characteristicproductrelated__value'))
                                   .select_related('group',)
                                   .distinct()
                                   ),

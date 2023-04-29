@@ -3,7 +3,7 @@ from captcha.fields import CaptchaField
 
 from main.models import (Product, AdditionalImage,
                          SuperCategory, SubCategory, 
-                         CharacteristicGroup, CharacteristicItem, CharacteristicProduct,
+                         CharacteristicGroup, CharacteristicItem, CharacteristicProductRelated,
                          Comment)
 
 
@@ -84,8 +84,12 @@ AdditionalImageFormSet = forms.inlineformset_factory(Product, AdditionalImage, f
 
 class SelectCharacteristicForm(forms.ModelForm):
     class Meta:
-        model = CharacteristicProduct
+        model = CharacteristicProductRelated
         fields = ('characteristic', 'value', 'product')
         widgets = {'product': forms.HiddenInput}
 
-SelectCharacteristicFormSet = forms.inlineformset_factory(Product, CharacteristicProduct, form=SelectCharacteristicForm, extra=3, can_delete=False)
+SelectCharacteristicFormSet = forms.inlineformset_factory(Product, 
+                                                          CharacteristicProductRelated, 
+                                                          form=SelectCharacteristicForm, 
+                                                          extra=3, 
+                                                          can_delete=False)
