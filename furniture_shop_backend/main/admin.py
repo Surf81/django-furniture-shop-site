@@ -5,7 +5,8 @@ from .models import (SuperCategory, SubCategory,
                      CharacteristicItem, CharacteristicGroup, 
                      Product, AdditionalImage, 
                      CharacteristicProductRelated,
-                     UserProductRelated)
+                     UserProductRelated,
+                     Comment)
 
 
 class SubCategoryInline(admin.TabularInline):
@@ -64,3 +65,8 @@ class UserProductRelatedAdmin(admin.ModelAdmin):
 @admin.register(CharacteristicProductRelated)
 class CharacteristicProductRelatedAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('product', 'content', 'created_at')
+    readonly_fields = ('created_at',)

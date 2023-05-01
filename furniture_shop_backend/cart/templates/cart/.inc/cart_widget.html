@@ -1,3 +1,5 @@
+{% load static %}
+
 <a class="{{ cart.class }} {{ cart.class_empty}}"
    href="{{ cart.href }}"
    data-bs-toggle="tooltip" 
@@ -6,10 +8,8 @@
    title="Всего {{ cart.count }} товаров на сумму {{ cart.total }} руб."
    data-bs-title="Всего {{ cart.count }} товаров на сумму {{ cart.total }} руб."
 >
-    {{ cart.label }}
-    {% if cart.count %}
-    <small>({{ cart.count }} ед.)</small>
-    {% endif %}
+    <img src="{% static 'cart\img\shopping-cart-blue-logo.png' %}">
+    <span class="badge count">{{ cart.count }}</span >
 </a>
 
 

@@ -171,6 +171,10 @@ class UserProductRelated(models.Model):
     count_on_cart = models.PositiveIntegerField("в корзине", default=0, null=False)
     is_favorit = models.BooleanField('избранное', default=False, null=False)
 
+    class Meta:
+        verbose_name_plural = 'действия пользователей с товарами'
+        verbose_name = 'пользователь - товар'
+
     def __str__(self):
         return f"{self.user} : {self.product}"
     

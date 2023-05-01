@@ -213,12 +213,12 @@ def product_edit_view(request, pk):
                 characteristic_form.save()
             if image_form.is_valid():
                 image_form.save()
-                messages.add_message(request, messages.SUCCESS, 'Товар добавлен')
+                messages.add_message(request, messages.SUCCESS, 'Товар изменен')
             else:
                 messages.add_message(request, messages.SUCCESS, 'Товар добавлен без изображений поскольку основное изображение не выбрано')
             return redirect('main:detail', pk=product.pk)
 
-        messages.add_message(request, messages.WARNING, 'Товар не добавлен')
+        messages.add_message(request, messages.WARNING, 'Товар не изменен')
     else:
         product_form = EditProductForm(instance=product)
         image_form = AdditionalImageFormSet(instance=product)
