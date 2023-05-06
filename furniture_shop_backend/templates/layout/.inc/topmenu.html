@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <ul class="col navbar-nav justify-content-end">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'auth:signup' %}"
+            >Регистрация</a
+          >
+        </li>
+        {% if user.is_authenticated %}
+        <div class="btn-group">
+          <li class="nav-item dropdown">
+            <span
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="#"
+              role="button"
+              aria-expanded="false"
+              id="dropdownMenuButton1"
+              data-display="static"
+              >Профиль
+            </span>
+            <ul
+              class="dropdown-menu dropdown-menu-right dropdown-menu-end"
+              aria-labelledby="dropdownMenuButton1"
+            >
+                {% if not user.is_activated%}
+                <div class="alert alert-warning py-3 my-0">{{user.email}}</div>
+                <div class="alert alert-danger py-0 mt-0"><small>Учетная запись не активирована</small></div>
+                {% else %}
+                <div class="alert alert-primary py-3 mt-0">{{user.email}}</div>
+                {% endif %}
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="{% url 'cart:cart_view' %}"
+                  >Товары в корзине</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="{% url 'main:favorite_products' %}"
+                  >Избранные товары</a
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+
+              <li>
+                <a class="dropdown-item" href="{% url 'auth:update' %}"
+                  >Изменить личные данные</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="{% url 'auth:password_change' %}"
+                  >Изменить пароль</a
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="{% url 'auth:logout' %}"
+                  >Выйти</a
+                >
+              </li>
+            </ul>
+          </li>
+        </div>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'auth:login' %}">Вход</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>

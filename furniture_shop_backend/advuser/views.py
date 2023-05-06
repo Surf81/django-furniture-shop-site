@@ -7,13 +7,12 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.signing import BadSignature
 from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
 
 from advuser.forms import EmailLoginForm, SignupForm, UpdateUserForm
 from advuser.models import AdvancedUser
 
 from .utilities import signer
-
-
 
 
 class EmailLoginView(LoginView):
@@ -32,9 +31,13 @@ class LogoutView(LogoutView):
 
 class AutoAuthorizationMixin:
     def form_valid(self, form):
-        form.save()
-        update_session_auth_hash(self.request, form.user)
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.info(self.request, "Спасибо за регистрацию. Вход в ваш профиль выполнен автоматически")
+        email = form.cleaned_data['email']
+        password=form.cleaned_data['password1']
+        user = authenticate(email=email, password=password)
+        login(self.request, user)
+        return response
 
 
 class SignupView(AutoAuthorizationMixin, CreateView):
@@ -44,6 +47,15 @@ class SignupView(AutoAuthorizationMixin, CreateView):
     form_class = SignupForm
     template_name = "advuser/register.html"
     success_url = reverse_lazy("auth:register_done")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Успешная регистрация!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.warning(self.request, "Что-то пошло не так! Попробуйте еще раз")
+        self.success_url = reverse_lazy("auth:signup")
+        return super().form_invalid(form)
     
 
 class RegisterDoneView(TemplateView):
@@ -58,13 +70,16 @@ def user_activate(request, sign):
     try:
         email = signer.unsign(sign)
     except BadSignature:
-        return render(request, 'auth/bad_signature.html')
+        messages.error(request, "Код активации не верный!")
+        return render(request, 'advuser/bad_signature.html')
     
     user = get_object_or_404(AdvancedUser, email=email)
     if user.is_activated:
-        template = 'auth/user_is_activated.html'
+        messages.warning(request, "Повторная попытка активации!")
+        template = 'advuser/user_is_activated.html'
     else:
-        template = 'auth/activation_done.html'
+        messages.success(request, "Активация прошла успешно!")
+        template = 'advuser/activation_done.html'
         user.is_active = True
         user.is_activated = True
         user.save()
@@ -88,6 +103,15 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
         if not queryset:
             queryset = self.get_queryset()
         return get_object_or_404(queryset, pk = self.user_id)
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Данные изменены!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.warning(self.request, "Что-то пошло не так!")
+        self.success_url = reverse_lazy("auth:update")
+        return super().form_invalid(form)
 
 
 class UpdateUserDoneView(TemplateView):
@@ -102,6 +126,15 @@ class ChangePasswordView(PasswordChangeView):
     model = AdvancedUser
     template_name = "advuser/password_change.html"
     success_url = reverse_lazy("auth:password_change_done")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Пароль изменен!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.warning(self.request, "Что-то пошло не так! Попробуйте еще раз")
+        self.success_url = reverse_lazy("auth:password_change")
+        return super().form_invalid(form)
 
 
 class ChangePasswordDoneView(TemplateView):

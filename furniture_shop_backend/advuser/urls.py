@@ -2,7 +2,7 @@ from django.urls import path
 
 from advuser.views import (EmailLoginView, LogoutView, 
                            SignupView, RegisterDoneView, user_activate,
-                           ChangePasswordView, ChangePasswordDoneView, 
+                           ChangePasswordView, ChangePasswordDoneView,
                            UpdateUserView, UpdateUserDoneView)
 
 app_name = "auth"

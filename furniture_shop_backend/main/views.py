@@ -126,6 +126,9 @@ class DetailPageView(DetailView):
             if c_form.is_valid():
                 c_form.save()
                 messages.add_message(self.request, messages.SUCCESS, 'Комментарий добавлен')
+                if c_form.cleaned_data['is_claim']:
+                    messages.add_message(self.request, messages.INFO, 'Информация с Вашей жалобой отправлена в службу контроля качества')
+
             else:
                 form = c_form
                 messages.add_message(self.request, messages.WARNING, 'Комментарий не добавлен')

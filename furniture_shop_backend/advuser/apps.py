@@ -11,7 +11,7 @@ class AdvuserConfig(AppConfig):
 
 
 
-user_registered = Signal()#providing_args=['instance'])
+user_registered = Signal()
 
 def user_registered_dispatcher(sender, **kwargs):
     send_activation_notification(kwargs['instance'])

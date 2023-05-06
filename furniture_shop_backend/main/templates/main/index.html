@@ -2,8 +2,14 @@
 
 {% load static %}
 {% load bootstrap5 %}
-
 {% load store_tags %}
+
+{% block title %}
+{% if category %}
+{{ category }} - 
+{% endif %}Магазин
+{% endblock title %}
+
 
 {% block content %}
 

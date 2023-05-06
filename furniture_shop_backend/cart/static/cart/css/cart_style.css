@@ -9,11 +9,7 @@
     -webkit-justify-content: center;
     justify-content: center;
     position: absolute;
-    bottom: 10px;
-    right: 15px;
+    bottom: 8px;
+    right: 10px;
     background: #ff420f;
-}
-
-.empty_cart {
-    color: #888;
 }

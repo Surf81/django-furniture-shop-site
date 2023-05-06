@@ -3,6 +3,7 @@ from os.path import splitext
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
+from smtplib import SMTPDataError, SMTPRecipientsRefused
 
 
 def get_timestamp_path(instance, filename):
@@ -10,16 +11,24 @@ def get_timestamp_path(instance, filename):
 
 
 def send_claim_notification(comment):
-    if settings.ALLOWED_HOSTS:
+    if settings.ALLOWED_HOSTS and settings.ALLOWED_HOSTS[0] not in ('localhost', '127.0.0.1'):
         host = 'http://' + settings.ALLOWED_HOSTS[0]
     else:
-        host = 'http://localhost:8000'
+        host = 'http://127.0.0.1:8000'
 
-    context = {'host': host, 'comment': comment}
+
+    context = {
+               'host': host, 
+               'comment': comment
+              }
     subject = render_to_string('email/claim_letter_subject.txt', context)
     body_text = render_to_string('email/claim_letter_body.txt', context)
 
-    send_mail(subject, body_text, settings.EMAIL_HOST_USER, [settings.QUALITY_CONTROL_SERVISE_EMAIL])
+    try:
+        send_mail(subject, body_text, settings.EMAIL_HOST_USER, [settings.QUALITY_CONTROL_SERVISE_EMAIL])
+    except (SMTPDataError, SMTPRecipientsRefused) as e:
+        print('log. error', e)
+
 
 
 def user_is_staff(user):
