@@ -119,7 +119,7 @@ class Product(models.Model):
     description = models.TextField('описание')
     count = models.PositiveIntegerField("количество")
     price = models.PositiveIntegerField("цена")
-    image = models.ImageField('основное изображение', blank=True, upload_to=get_timestamp_path)
+    image = models.ImageField('основное изображение', blank=True, null=True, upload_to=get_timestamp_path)
     is_active = models.BooleanField('модель доступна?', default=True, db_index=True)
     created_at = models.DateTimeField('опубликовано', auto_now_add=True, db_index=True)    
     changed_at = models.DateTimeField('опубликовано', auto_now=True, db_index=True)    

@@ -90,17 +90,13 @@ WSGI_APPLICATION = "furniture_shop.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DATABASE_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': 5432,
     }    
 }
 
@@ -138,7 +134,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-QUALITY_CONTROL_SERVISE_EMAIL = "qualyty_control@furnitureshop.ru"
+QUALITY_CONTROL_SERVISE_EMAIL = "qualyty_control@internet.ru"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -180,10 +176,16 @@ ABSOLUTE_URL_OVERRIDES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 CART_SESSION_ID = "cart"
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
 
 # В модуле local_settings.py указаны настройки разработчика
 # В продакшн данный файл не добавляется
 try:
     from .local_settings import *
 except ImportError:
-    print('локальные настройки отсутствуют')
+    print('log. локальные настройки отсутствуют')

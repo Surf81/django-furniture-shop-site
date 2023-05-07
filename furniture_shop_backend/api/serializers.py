@@ -11,13 +11,14 @@ class CharacteristicItemSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category_id = serializers.IntegerField(source='category.id')
-    category_name = serializers.CharField(source='category.title')
-    characteristics = CharacteristicItemSerializer(many=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    # category_id = serializers.IntegerField(source='category.id')
+    category_name = serializers.ReadOnlyField(source='category.title')
+    characteristics = CharacteristicItemSerializer(many=True, read_only=True)
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'count', 'price', 'image', 
-                  'category_id', 'category_name', 'characteristics')
+                  'category', 'category_name', 'characteristics')
 
 
 class ProductDetailSerializer(ProductSerializer):
@@ -29,7 +30,7 @@ class ProductDetailSerializer(ProductSerializer):
 
         
 class CommentSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_at = serializers.ReadOnlyField()
     class Meta:
         model = Comment

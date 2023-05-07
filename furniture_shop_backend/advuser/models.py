@@ -6,10 +6,11 @@ from django.utils.translation import gettext_lazy as _
 
 class AdvancedUserManager(UserManager):
     def get_by_natural_keys(self, **kwargs):
-        if 'email' in kwargs:
-            return self.get(**{self.model.EMAIL_FIELD: kwargs['email']})
+        if not 'email' in kwargs and 'username' in kwargs:
+            email = kwargs['username']
         else:
-            return self.get(**{self.model.USERNAME_FIELD: kwargs['username']})
+            email = kwargs['email']
+        return self.get(**{self.model.EMAIL_FIELD: email})
      
 
 class AdvancedUser(AbstractUser):

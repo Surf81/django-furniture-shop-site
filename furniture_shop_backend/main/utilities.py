@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import send_mail
 from smtplib import SMTPDataError, SMTPRecipientsRefused
+from django.http import Http404
 
 
 def get_timestamp_path(instance, filename):
@@ -33,3 +34,15 @@ def send_claim_notification(comment):
 
 def user_is_staff(user):
     return user.is_staff
+
+
+def user_permission_test(condition):
+    def wrapper(func):
+        def get_controller(request, *args, **kwargs):
+            if condition(request.user):
+                return func(request, *args, **kwargs)
+            else:
+                raise Http404
+        return get_controller
+    return wrapper
+

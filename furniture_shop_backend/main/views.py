@@ -8,12 +8,11 @@ from django.views.generic.detail import DetailView
 from django.db.models.query import Prefetch
 from django.db.models import F, Q, Case, When, BooleanField
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 
-from main.utilities import user_is_staff
-
+from main.utilities import user_is_staff, user_permission_test
 
 from .models import (Product, 
                      CharacteristicItem, 
@@ -171,7 +170,7 @@ class FavoriteProductsView(LoginRequiredMixin, ListView):
         return queryset
 
 
-@user_passes_test(user_is_staff)
+@user_permission_test(user_is_staff)
 def product_create_view(request):
     if request.method == 'POST':
         product_form = CreateProductForm(data=request.POST, files=request.FILES)
@@ -203,7 +202,7 @@ def product_create_view(request):
     return render(request, 'main/product_create.html', context)
 
 
-@user_passes_test(user_is_staff)
+@user_permission_test(user_is_staff)
 def product_edit_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
@@ -236,7 +235,7 @@ def product_edit_view(request, pk):
     return render(request, 'main/product_edit.html', context)
 
 
-@user_passes_test(user_is_staff)
+@user_permission_test(user_is_staff)
 def product_del_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
