@@ -41,6 +41,7 @@ class IndexPageView(ListView):
     queryset = (Product.objects
                 .select_related('category')
                 .filter(is_active__exact=True)
+                .defer('is_active', 'created_at', 'changed_at')
                 .prefetch_related(prefetch_characteristics)
     )
     template_name = "main/index.html"
@@ -87,6 +88,7 @@ class DetailPageView(DetailView):
     queryset =   queryset = (Product.objects
                 .select_related('category')
                 .filter(is_active__exact=True)
+                .defer('is_active', 'created_at', 'changed_at')
                 .prefetch_related(prefetch)
     )
     context_object_name = CONTEXT_OBJECT_NAME

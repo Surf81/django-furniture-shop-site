@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = ["advuser.backends.AdvModelBackend"]#, "django.contrib.auth.backends.ModelBackend"]
+AUTHENTICATION_BACKENDS = ["advuser.backends.AdvModelBackend"]
 AUTH_USER_MODEL = 'advuser.AdvancedUser'
 LOGIN_URL = reverse_lazy('auth:login')
 LOGIN_REDIRECT_URL = reverse_lazy('main:index')
